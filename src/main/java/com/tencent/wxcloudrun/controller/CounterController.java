@@ -1,5 +1,10 @@
 package com.tencent.wxcloudrun.controller;
 
+import me.chanjar.weixin.common.error.WxErrorException;
+import me.chanjar.weixin.mp.api.WxMpService;
+import me.chanjar.weixin.mp.api.impl.WxMpServiceImpl;
+import me.chanjar.weixin.mp.config.WxMpConfigStorage;
+import me.chanjar.weixin.mp.config.impl.WxMpDefaultConfigImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.tencent.wxcloudrun.config.ApiResponse;
@@ -79,5 +84,12 @@ public class CounterController {
       return ApiResponse.error("参数action错误");
     }
   }
+
+  @PostMapping(value = "/api/getJsApi")
+  ApiResponse getJsApi() throws WxErrorException {
+    String str = counterService.getJsApi();
+    return ApiResponse.ok(str);
+  }
+
   
 }
