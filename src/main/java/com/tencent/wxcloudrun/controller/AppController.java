@@ -1,5 +1,9 @@
 package com.tencent.wxcloudrun.controller;
 
+import me.chanjar.weixin.common.error.WxErrorException;
+import me.chanjar.weixin.mp.api.WxMpService;
+import me.chanjar.weixin.mp.api.impl.WxMpServiceImpl;
+import me.chanjar.weixin.mp.config.impl.WxMpDefaultConfigImpl;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,13 +22,21 @@ import java.util.UUID;
 public class AppController {
 
     @PostMapping("/getJsApi")
-    public String getSign(@RequestBody Map data) {
-        Map<String, String> ret = sign(data.get("nonceStr").toString(),data.get("timestamp").toString(),data.get("jsapi_ticket").toString(),data.get("url").toString());
+    public String getSign(@RequestBody Map data) throws WxErrorException {
+        String appId = "wx290ba1cf9fb5353b";
+        String secret = "1d5e5445df92558afe7179604831e618";
+        WxMpService wxMpService = new WxMpServiceImpl();
+        WxMpDefaultConfigImpl wxMpDefaultConfig = new WxMpDefaultConfigImpl();
+        wxMpDefaultConfig.setAppId(appId);
+        wxMpDefaultConfig.setSecret(secret);
+        wxMpService.setWxMpConfigStorage(wxMpDefaultConfig);
+        String jsApiTicket = wxMpService.getJsapiTicket();
+        Map<String, String> ret = sign(data.get("nonceStr").toString(), data.get("timestamp").toString(), jsApiTicket, data.get("url").toString());
         System.out.println(ret.toString());
         return ret.get("signature");
     }
 
-    public static Map<String, String> sign(String nonce_str,String timestamp,String jsapi_ticket, String url) {
+    public static Map<String, String> sign(String nonce_str, String timestamp, String jsapi_ticket, String url) {
         Map<String, String> ret = new HashMap<String, String>();
         String string1;
         String signature = "";
@@ -36,19 +48,14 @@ public class AppController {
                 "&url=" + url;
         System.out.println(string1);
 
-        try
-        {
+        try {
             MessageDigest crypt = MessageDigest.getInstance("SHA-1");
             crypt.reset();
             crypt.update(string1.getBytes("UTF-8"));
             signature = byteToHex(crypt.digest());
-        }
-        catch (NoSuchAlgorithmException e)
-        {
+        } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
-        }
-        catch (UnsupportedEncodingException e)
-        {
+        } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
 
@@ -63,8 +70,7 @@ public class AppController {
 
     private static String byteToHex(final byte[] hash) {
         Formatter formatter = new Formatter();
-        for (byte b : hash)
-        {
+        for (byte b : hash) {
             formatter.format("%02x", b);
         }
         String result = formatter.toString();
@@ -79,5 +85,6 @@ public class AppController {
     private static String create_timestamp() {
         return Long.toString(System.currentTimeMillis() / 1000);
     }
+
 
 }

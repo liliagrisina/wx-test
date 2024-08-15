@@ -56,6 +56,18 @@
             <artifactId>weixin-java-mp</artifactId>
             <version>4.6.3.B</version>
         </dependency>
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>3.1</version>
+        </dependency>
+
+        <!--fastjson-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.32</version>
+        </dependency>
 
     </dependencies>
 
@@ -72,7 +84,7 @@
                         </exclude>
                     </excludes>
                 </configuration>
-            </plugin>
+            </plugin><plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId><configuration><source>11</source><target>11</target></configuration></plugin>
         </plugins>
         <resources>
             <resource>
